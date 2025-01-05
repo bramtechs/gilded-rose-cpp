@@ -33,10 +33,36 @@ void GildedRose::decreaseItemQuality(Item& item) const
     }
 }
 
+class IQualityUpdater {
+public:
+    virtual ~IQualityUpdater() = default;
+    virtual void execute(Item& item) = 0;
+};
+
+class AgedBrieQualityUpdater final : public IQualityUpdater {
+public:
+    void execute(Item& item) override
+    {
+        if (item.quality < 50) {
+            item.quality++;
+        }
+        if (item.sellIn < 0 && item.quality < 50) {
+            item.quality++;
+        }
+    }
+};
+
 void GildedRose::updateQuality()
 {
     for (Item& item : items) {
-        if (!isAgedBrie(item) && !isBackstagePass(item)) {
+
+        if (isAgedBrie(item)) {
+            AgedBrieQualityUpdater().execute(item);
+            item.sellIn--;
+            continue;
+        }
+
+        if (!isBackstagePass(item)) {
             if (item.quality > 0 && !isHandOfRagnaros(item)) {
                 decreaseItemQuality(item);
             }
@@ -59,14 +85,10 @@ void GildedRose::updateQuality()
         }
 
         if (item.sellIn < 0) {
-            if (!isAgedBrie(item)) {
-                if (isBackstagePass(item)) {
-                    item.quality = 0;
-                } else if (item.quality > 0 && !isHandOfRagnaros(item)) {
-                    decreaseItemQuality(item);
-                }
-            } else if (item.quality < 50) {
-                item.quality++;
+            if (isBackstagePass(item)) {
+                item.quality = 0;
+            } else if (item.quality > 0 && !isHandOfRagnaros(item)) {
+                decreaseItemQuality(item);
             }
         }
     }
