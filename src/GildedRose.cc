@@ -47,12 +47,10 @@ void GildedRose::updateQuality()
 
         if (item.sellIn < 0) {
             if (!isAgedBrie(item)) {
-                if (!isBackstagePass(item)) {
-                    if (item.quality > 0 && !isHandOfRagnaros(item)) {
-                        item.quality--;
-                    }
-                } else {
+                if (isBackstagePass(item)) {
                     item.quality = 0;
+                } else if (item.quality > 0 && !isHandOfRagnaros(item)) {
+                    item.quality--;
                 }
             } else if (item.quality < 50) {
                 item.quality++;
