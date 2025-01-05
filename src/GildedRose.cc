@@ -5,10 +5,15 @@ GildedRose::GildedRose(std::vector<Item>& items)
 {
 }
 
+bool GildedRose::isAgedBrie(const Item& item) const
+{
+    return item.name == "Aged Brie";
+}
+
 void GildedRose::updateQuality()
 {
     for (Item& item : items) {
-        if (item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert") {
+        if (!isAgedBrie(item) && item.name != "Backstage passes to a TAFKAL80ETC concert") {
             if (item.quality > 0) {
                 if (item.name != "Sulfuras, Hand of Ragnaros") {
                     item.quality = item.quality - 1;
@@ -39,7 +44,7 @@ void GildedRose::updateQuality()
         }
 
         if (item.sellIn < 0) {
-            if (item.name != "Aged Brie") {
+            if (!isAgedBrie(item)) {
                 if (item.name != "Backstage passes to a TAFKAL80ETC concert") {
                     if (item.quality > 0) {
                         if (item.name != "Sulfuras, Hand of Ragnaros") {

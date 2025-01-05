@@ -20,4 +20,7 @@ public:
     GildedRose(std::vector<Item>& items);
 
     void updateQuality();
+
+private:
+    [[nodiscard]] bool isAgedBrie(const Item& item) const;
 };
