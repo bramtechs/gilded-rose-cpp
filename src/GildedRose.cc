@@ -75,6 +75,14 @@ public:
     }
 };
 
+class SulfurasQualityUpdater final : public IQualityUpdater {
+public:
+    void execute(Item& item) override
+    {
+        // Sulfuras never has to be sold or decreases in quality
+    }
+};
+
 void GildedRose::updateQuality()
 {
     for (Item& item : items) {
@@ -85,17 +93,18 @@ void GildedRose::updateQuality()
         } else if (isBackstagePass(item)) {
             BackstagePassQualityUpdater().execute(item);
             continue;
+        } else if (isHandOfRagnaros(item)) {
+            SulfurasQualityUpdater().execute(item);
+            continue;
         }
 
-        if (item.quality > 0 && !isHandOfRagnaros(item)) {
+        if (item.quality > 0) {
             decreaseItemQuality(item);
         }
 
-        if (!isHandOfRagnaros(item)) {
-            item.sellIn--;
-        }
+        item.sellIn--;
 
-        if (item.sellIn < 0 && item.quality > 0 && !isHandOfRagnaros(item)) {
+        if (item.sellIn < 0 && item.quality > 0) {
             decreaseItemQuality(item);
         }
     }
