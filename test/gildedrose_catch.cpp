@@ -117,3 +117,12 @@ TEST_CASE("Backstage passes quality drops to 0 after the concert")
     app.updateQuality();
     REQUIRE(0 == app.items[0].quality);
 }
+
+TEST_CASE("Conjured items degrade in quality twice as fast as normal items")
+{
+    std::vector<Item> items;
+    items.push_back(Item("Conjured", 1, 10));
+    GildedRose app(items);
+    app.updateQuality();
+    REQUIRE(8 == app.items[0].quality);
+}
