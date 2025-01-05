@@ -30,12 +30,12 @@ void GildedRose::updateQuality()
         } else if (item.quality < 50) {
             item.quality++;
 
-            if (isBackstagePass(item)) {
-                if (item.sellIn <= 10 && item.quality < 50) {
+            if (isBackstagePass(item) && item.quality < 50) {
+                if (item.sellIn <= 10) {
                     item.quality++;
                 }
 
-                if (item.sellIn <= 5 && item.quality < 50) {
+                if (item.sellIn <= 5) {
                     item.quality++;
                 }
             }
@@ -52,7 +52,7 @@ void GildedRose::updateQuality()
                         item.quality--;
                     }
                 } else {
-                    item.quality -= item.quality;
+                    item.quality = 0;
                 }
             } else if (item.quality < 50) {
                 item.quality++;
