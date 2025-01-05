@@ -1,36 +1,10 @@
 #include "GildedRose.h"
 
+#include <memory>
+
 GildedRose::GildedRose(std::vector<Item>& items)
     : items(items)
 {
-}
-
-bool GildedRose::isAgedBrie(const Item& item) const
-{
-    return item.name == "Aged Brie";
-}
-
-bool GildedRose::isBackstagePass(const Item& item) const
-{
-    return item.name.find("Backstage pass") != std::string::npos;
-}
-
-bool GildedRose::isHandOfRagnaros(const Item& item) const
-{
-    return item.name == "Sulfuras, Hand of Ragnaros";
-}
-
-bool GildedRose::isConjured(const Item& item) const
-{
-    return item.name.find("Conjured") != std::string::npos;
-}
-
-void GildedRose::decreaseItemQuality(Item& item) const
-{
-    item.quality--;
-    if (isConjured(item)) {
-        item.quality--;
-    }
 }
 
 class IQualityUpdater {
@@ -113,26 +87,51 @@ public:
     }
 };
 
-void GildedRose::updateQuality()
-{
-    for (Item& item : items) {
-
+class QualityUpdaterFactory {
+public:
+    std::unique_ptr<IQualityUpdater> create(const Item& item)
+    {
         if (isAgedBrie(item)) {
-            AgedBrieQualityUpdater().execute(item);
-            continue;
+            return std::make_unique<AgedBrieQualityUpdater>();
         }
         if (isBackstagePass(item)) {
-            BackstagePassQualityUpdater().execute(item);
-            continue;
+            return std::make_unique<BackstagePassQualityUpdater>();
         }
         if (isHandOfRagnaros(item)) {
-            SulfurasQualityUpdater().execute(item);
-            continue;
+            return std::make_unique<SulfurasQualityUpdater>();
         }
         if (isConjured(item)) {
-            ConjuredQualityUpdater().execute(item);
-            continue;
+            return std::make_unique<ConjuredQualityUpdater>();
         }
-        NormalQualityUpdater().execute(item);
+        return std::make_unique<NormalQualityUpdater>();
+    }
+
+private:
+    bool isAgedBrie(const Item& item) const
+    {
+        return item.name == "Aged Brie";
+    }
+
+    bool isBackstagePass(const Item& item) const
+    {
+        return item.name.find("Backstage pass") != std::string::npos;
+    }
+
+    bool isHandOfRagnaros(const Item& item) const
+    {
+        return item.name == "Sulfuras, Hand of Ragnaros";
+    }
+
+    bool isConjured(const Item& item) const
+    {
+        return item.name.find("Conjured") != std::string::npos;
+    }
+};
+
+void GildedRose::updateQuality()
+{
+    QualityUpdaterFactory factory;
+    for (Item& item : items) {
+        factory.create(item)->execute(item);
     }
 }
