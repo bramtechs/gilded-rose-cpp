@@ -1,6 +1,6 @@
 #include "GildedRose.h"
 
-GildedRose::GildedRose(vector<Item>& items)
+GildedRose::GildedRose(std::vector<Item>& items)
     : items(items)
 {
 }

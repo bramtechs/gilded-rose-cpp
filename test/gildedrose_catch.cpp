@@ -13,7 +13,7 @@ std::ostream& operator<<(std::ostream& os, const Item& obj)
 // This is a normal unit test using Catch2
 TEST_CASE("UpdateQuality")
 {
-    vector<Item> items;
+    std::vector<Item> items;
     items.push_back(Item("foo", 0, 0));
     GildedRose app(items);
     app.updateQuality();
