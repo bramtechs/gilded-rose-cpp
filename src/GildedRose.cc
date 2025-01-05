@@ -83,17 +83,33 @@ public:
     }
 };
 
-class NormalQualityUpdater final : public IQualityUpdater {
+class NormalQualityUpdater : public IQualityUpdater {
 public:
+    NormalQualityUpdater(int qualityDecreaseStep = 1)
+        : mQualityDecreaseStep(qualityDecreaseStep)
+    {
+    }
+
     void execute(Item& item) override
     {
         if (item.quality > 0) {
-            item.quality--;
+            item.quality -= mQualityDecreaseStep;
         }
         item.sellIn--;
         if (item.sellIn < 0 && item.quality > 0) {
-            item.quality--;
+            item.quality -= mQualityDecreaseStep;
         }
+    }
+
+private:
+    int mQualityDecreaseStep;
+};
+
+class ConjuredQualityUpdater final : public NormalQualityUpdater {
+public:
+    ConjuredQualityUpdater()
+        : NormalQualityUpdater(2)
+    {
     }
 };
 
@@ -111,6 +127,10 @@ void GildedRose::updateQuality()
         }
         if (isHandOfRagnaros(item)) {
             SulfurasQualityUpdater().execute(item);
+            continue;
+        }
+        if (isConjured(item)) {
+            ConjuredQualityUpdater().execute(item);
             continue;
         }
         NormalQualityUpdater().execute(item);
