@@ -23,4 +23,5 @@ public:
 
 private:
     [[nodiscard]] bool isAgedBrie(const Item& item) const;
+    [[nodiscard]] bool isBackstagePass(const Item& item) const;
 };
