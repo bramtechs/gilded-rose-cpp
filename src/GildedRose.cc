@@ -49,6 +49,29 @@ public:
         if (item.sellIn < 0 && item.quality < 50) {
             item.quality++;
         }
+        item.sellIn--;
+    }
+};
+
+class BackstagePassQualityUpdater final : public IQualityUpdater {
+public:
+    void execute(Item& item) override
+    {
+        item.quality++;
+
+        if (item.quality < 50) {
+            if (item.sellIn <= 10) {
+                item.quality++;
+            }
+
+            if (item.sellIn <= 5) {
+                item.quality++;
+            }
+        }
+        item.sellIn--;
+        if (item.sellIn < 0) {
+            item.quality = 0;
+        }
     }
 };
 
@@ -58,38 +81,22 @@ void GildedRose::updateQuality()
 
         if (isAgedBrie(item)) {
             AgedBrieQualityUpdater().execute(item);
-            item.sellIn--;
+            continue;
+        } else if (isBackstagePass(item)) {
+            BackstagePassQualityUpdater().execute(item);
             continue;
         }
 
-        if (!isBackstagePass(item)) {
-            if (item.quality > 0 && !isHandOfRagnaros(item)) {
-                decreaseItemQuality(item);
-            }
-        } else if (item.quality < 50) {
-            item.quality++;
-
-            if (isBackstagePass(item) && item.quality < 50) {
-                if (item.sellIn <= 10) {
-                    item.quality++;
-                }
-
-                if (item.sellIn <= 5) {
-                    item.quality++;
-                }
-            }
+        if (item.quality > 0 && !isHandOfRagnaros(item)) {
+            decreaseItemQuality(item);
         }
 
         if (!isHandOfRagnaros(item)) {
             item.sellIn--;
         }
 
-        if (item.sellIn < 0) {
-            if (isBackstagePass(item)) {
-                item.quality = 0;
-            } else if (item.quality > 0 && !isHandOfRagnaros(item)) {
-                decreaseItemQuality(item);
-            }
+        if (item.sellIn < 0 && item.quality > 0 && !isHandOfRagnaros(item)) {
+            decreaseItemQuality(item);
         }
     }
 }
