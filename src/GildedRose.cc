@@ -83,6 +83,20 @@ public:
     }
 };
 
+class NormalQualityUpdater final : public IQualityUpdater {
+public:
+    void execute(Item& item) override
+    {
+        if (item.quality > 0) {
+            item.quality--;
+        }
+        item.sellIn--;
+        if (item.sellIn < 0 && item.quality > 0) {
+            item.quality--;
+        }
+    }
+};
+
 void GildedRose::updateQuality()
 {
     for (Item& item : items) {
@@ -90,22 +104,15 @@ void GildedRose::updateQuality()
         if (isAgedBrie(item)) {
             AgedBrieQualityUpdater().execute(item);
             continue;
-        } else if (isBackstagePass(item)) {
+        }
+        if (isBackstagePass(item)) {
             BackstagePassQualityUpdater().execute(item);
             continue;
-        } else if (isHandOfRagnaros(item)) {
+        }
+        if (isHandOfRagnaros(item)) {
             SulfurasQualityUpdater().execute(item);
             continue;
         }
-
-        if (item.quality > 0) {
-            decreaseItemQuality(item);
-        }
-
-        item.sellIn--;
-
-        if (item.sellIn < 0 && item.quality > 0) {
-            decreaseItemQuality(item);
-        }
+        NormalQualityUpdater().execute(item);
     }
 }
