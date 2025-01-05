@@ -1,11 +1,12 @@
+/*
+ * Copyright (c) 2025. Doomhowl Interactive - bramtechs/brambasiel
+ * MIT License. Absolutely no warranty.
+ *
+ * File created on: 05-01-2025
+ */
+
 #include "GildedRose.h"
-
-#include <memory>
-
-GildedRose::GildedRose(std::vector<Item>& items)
-    : items(items)
-{
-}
+#include "unsafe_variant.hh"
 
 class IQualityUpdater {
 public:
@@ -87,23 +88,32 @@ public:
     }
 };
 
+// Variant of all quality updaters. Quite overkill for this exercise,
+// but avoids heap allocation for every item quality update.
+using AnyQualityUpdaters = howl::unsafe_variant<
+    AgedBrieQualityUpdater,
+    BackstagePassQualityUpdater,
+    SulfurasQualityUpdater,
+    ConjuredQualityUpdater,
+	NormalQualityUpdater>;
+
 class QualityUpdaterFactory {
 public:
-    std::unique_ptr<IQualityUpdater> create(const Item& item)
+    AnyQualityUpdaters create(const Item& item)
     {
         if (isAgedBrie(item)) {
-            return std::make_unique<AgedBrieQualityUpdater>();
+            return AgedBrieQualityUpdater();
         }
         if (isBackstagePass(item)) {
-            return std::make_unique<BackstagePassQualityUpdater>();
+            return BackstagePassQualityUpdater();
         }
         if (isHandOfRagnaros(item)) {
-            return std::make_unique<SulfurasQualityUpdater>();
+            return SulfurasQualityUpdater();
         }
         if (isConjured(item)) {
-            return std::make_unique<ConjuredQualityUpdater>();
+            return ConjuredQualityUpdater();
         }
-        return std::make_unique<NormalQualityUpdater>();
+        return NormalQualityUpdater();
     }
 
 private:
@@ -128,10 +138,15 @@ private:
     }
 };
 
+GildedRose::GildedRose(std::vector<Item>& items)
+    : items(items)
+{
+}
+
 void GildedRose::updateQuality()
 {
     QualityUpdaterFactory factory;
     for (Item& item : items) {
-        factory.create(item)->execute(item);
+        factory.create(item).get<IQualityUpdater>().execute(item);
     }
 }

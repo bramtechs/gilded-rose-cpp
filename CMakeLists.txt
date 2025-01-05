@@ -40,9 +40,10 @@ endif()
 add_executable(gildedrose_catch2
         src/GildedRose.h
         src/GildedRose.cc
+        src/unsafe_variant.hh
         test/gildedrose_catch.cpp
         test/main.cpp)
-set_target_properties(gildedrose_catch2 PROPERTIES CXX_STANDARD 11)
+set_target_properties(gildedrose_catch2 PROPERTIES CXX_STANDARD 17)
 target_include_directories(gildedrose_catch2
         PUBLIC src)
 target_link_libraries(gildedrose_catch2 Catch2::Catch2 approvaltests)
