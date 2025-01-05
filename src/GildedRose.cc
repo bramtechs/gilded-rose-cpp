@@ -15,11 +15,16 @@ bool GildedRose::isBackstagePass(const Item& item) const
     return item.name.find("Backstage pass") != std::string::npos;
 }
 
+bool GildedRose::isHandOfRagnaros(const Item& item) const
+{
+    return item.name == "Sulfuras, Hand of Ragnaros";
+}
+
 void GildedRose::updateQuality()
 {
     for (Item& item : items) {
         if (!isAgedBrie(item) && !isBackstagePass(item)) {
-            if (item.quality > 0 && item.name != "Sulfuras, Hand of Ragnaros") {
+            if (item.quality > 0 && !isHandOfRagnaros(item)) {
                 item.quality--;
             }
         } else if (item.quality < 50) {
@@ -36,14 +41,14 @@ void GildedRose::updateQuality()
             }
         }
 
-        if (item.name != "Sulfuras, Hand of Ragnaros") {
+        if (!isHandOfRagnaros(item)) {
             item.sellIn--;
         }
 
         if (item.sellIn < 0) {
             if (!isAgedBrie(item)) {
                 if (!isBackstagePass(item)) {
-                    if (item.quality > 0 && item.name != "Sulfuras, Hand of Ragnaros") {
+                    if (item.quality > 0 && !isHandOfRagnaros(item)) {
                         item.quality--;
                     }
                 } else {
