@@ -25,4 +25,7 @@ private:
     [[nodiscard]] bool isAgedBrie(const Item& item) const;
     [[nodiscard]] bool isBackstagePass(const Item& item) const;
     [[nodiscard]] bool isHandOfRagnaros(const Item& item) const;
+    [[nodiscard]] bool isConjured(const Item& item) const;
+
+    void decreaseItemQuality(Item& item) const;
 };

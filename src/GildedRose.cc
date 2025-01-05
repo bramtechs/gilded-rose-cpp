@@ -20,12 +20,25 @@ bool GildedRose::isHandOfRagnaros(const Item& item) const
     return item.name == "Sulfuras, Hand of Ragnaros";
 }
 
+bool GildedRose::isConjured(const Item& item) const
+{
+    return item.name.find("Conjured") != std::string::npos;
+}
+
+void GildedRose::decreaseItemQuality(Item& item) const
+{
+    item.quality--;
+    if (isConjured(item)) {
+        item.quality--;
+    }
+}
+
 void GildedRose::updateQuality()
 {
     for (Item& item : items) {
         if (!isAgedBrie(item) && !isBackstagePass(item)) {
             if (item.quality > 0 && !isHandOfRagnaros(item)) {
-                item.quality--;
+                decreaseItemQuality(item);
             }
         } else if (item.quality < 50) {
             item.quality++;
@@ -50,7 +63,7 @@ void GildedRose::updateQuality()
                 if (isBackstagePass(item)) {
                     item.quality = 0;
                 } else if (item.quality > 0 && !isHandOfRagnaros(item)) {
-                    item.quality--;
+                    decreaseItemQuality(item);
                 }
             } else if (item.quality < 50) {
                 item.quality++;
