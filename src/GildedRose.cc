@@ -95,7 +95,7 @@ using AnyQualityUpdaters = howl::unsafe_variant<
     BackstagePassQualityUpdater,
     SulfurasQualityUpdater,
     ConjuredQualityUpdater,
-	NormalQualityUpdater>;
+    NormalQualityUpdater>;
 
 class QualityUpdaterFactory {
 public:
@@ -145,8 +145,9 @@ GildedRose::GildedRose(std::vector<Item>& items)
 
 void GildedRose::updateQuality()
 {
-    QualityUpdaterFactory factory;
+    QualityUpdaterFactory factory {};
     for (Item& item : items) {
-        factory.create(item).get<IQualityUpdater>().execute(item);
+        auto& updater = factory.create(item).get<IQualityUpdater>();
+        updater.execute(item);
     }
 }
