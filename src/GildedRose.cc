@@ -8,6 +8,10 @@
 #include "GildedRose.h"
 #include "unsafe_variant.hh"
 
+/**
+ Application of the **strategy** pattern.
+ After evaluation, it is not the command pattern.
+ */
 class IQualityUpdater {
 public:
     virtual ~IQualityUpdater() = default;
